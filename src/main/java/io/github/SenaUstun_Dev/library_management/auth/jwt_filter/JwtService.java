@@ -1,4 +1,4 @@
-package io.github.SenaUstun_Dev.library_management.jwt_filter;
+package io.github.SenaUstun_Dev.library_management.auth.jwt_filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

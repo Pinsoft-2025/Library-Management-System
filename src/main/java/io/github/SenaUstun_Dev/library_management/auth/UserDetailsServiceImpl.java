@@ -1,7 +1,6 @@
-package io.github.SenaUstun_Dev.library_management.service;
+package io.github.SenaUstun_Dev.library_management.auth;
 
 import io.github.SenaUstun_Dev.library_management.entity.AppUser;
-import io.github.SenaUstun_Dev.library_management.entity.UserDetailsImpl;
 import io.github.SenaUstun_Dev.library_management.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

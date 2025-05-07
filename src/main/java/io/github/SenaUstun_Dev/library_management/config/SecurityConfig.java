@@ -1,7 +1,6 @@
 package io.github.SenaUstun_Dev.library_management.config;
 
-import io.github.SenaUstun_Dev.library_management.jwt_filter.JwtAuthFilter;
-import jakarta.servlet.http.HttpServletResponse;
+import io.github.SenaUstun_Dev.library_management.auth.jwt_filter.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

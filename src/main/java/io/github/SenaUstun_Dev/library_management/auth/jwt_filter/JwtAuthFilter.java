@@ -1,4 +1,4 @@
-package io.github.SenaUstun_Dev.library_management.jwt_filter;
+package io.github.SenaUstun_Dev.library_management.auth.jwt_filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

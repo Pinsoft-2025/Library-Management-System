@@ -1,10 +1,9 @@
-package io.github.SenaUstun_Dev.library_management.controller;
+package io.github.SenaUstun_Dev.library_management.auth;
 
 import io.github.SenaUstun_Dev.library_management.dto.request.LoginRequest;
 import io.github.SenaUstun_Dev.library_management.dto.request.RegisterRequest;
 import io.github.SenaUstun_Dev.library_management.dto.response.LoginResponse;
 import io.github.SenaUstun_Dev.library_management.entity.AppUser;
-import io.github.SenaUstun_Dev.library_management.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

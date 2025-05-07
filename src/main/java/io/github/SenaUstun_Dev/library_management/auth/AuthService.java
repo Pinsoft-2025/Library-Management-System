@@ -1,22 +1,20 @@
 // AuthService.java
-package io.github.SenaUstun_Dev.library_management.service;
+package io.github.SenaUstun_Dev.library_management.auth;
 
 import io.github.SenaUstun_Dev.library_management.dto.request.LoginRequest;
 import io.github.SenaUstun_Dev.library_management.dto.request.RegisterRequest;
 import io.github.SenaUstun_Dev.library_management.dto.response.LoginResponse;
-import io.github.SenaUstun_Dev.library_management.jwt_filter.JwtService;
+import io.github.SenaUstun_Dev.library_management.auth.jwt_filter.JwtService;
 import io.github.SenaUstun_Dev.library_management.entity.AppUser;
 import io.github.SenaUstun_Dev.library_management.entity.Role;
 import io.github.SenaUstun_Dev.library_management.repository.AppUserRepository;
 import io.github.SenaUstun_Dev.library_management.repository.RoleRepository;
-import io.github.SenaUstun_Dev.library_management.entity.UserDetailsImpl; // UserDetailsImpl
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;

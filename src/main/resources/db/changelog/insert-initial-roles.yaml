@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-insert-initial-roles # Benzersiz bir ID (dosya adıyla uyumlu olabilir)
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_ADMIN"
+              - column:
+                  name: description
+                  value: "Tam yetkili yönetici rolü"
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_USER"
+              - column:
+                  name: description
+                  value: "Standart kullanıcı rolü"
+      # Her bir rol için ayrı changeSet'ler de oluşturabilirsin,
+      # ancak ilgili veriler için tek bir changeSet genellikle daha temizdir.

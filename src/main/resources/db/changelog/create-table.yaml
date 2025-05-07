@@ -1,0 +1,344 @@
+databaseChangeLog:
+  - changeSet:
+      id: 000-initial-schema-author-info
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - tagDatabase:
+            tag: v1.0.0-initial-schema # Projenin başlangıç şeması için bir etiket
+
+  - changeSet:
+      id: 001-create-roles-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+
+  - changeSet:
+      id: 002-create-users-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  name: lost_book_count
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: borrowing_privilege
+                  type: VARCHAR(50) # EnumType.STRING (FULL, LIMITED, UNABLE)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_non_expired # JPA'da accountNonExpired
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_non_locked # JPA'da accountNonLocked
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credentials_non_expired # JPA'da credentialsNonExpired
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 003-create-user-roles-join-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    # primaryKey: true # Bileşik PK'nın parçası
+                    # primaryKeyName: pk_user_roles # Liquibase <addPrimaryKey> ile daha iyi yönetir
+                    foreignKeyName: fk_user_roles_user
+                    references: users(id)
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    # primaryKey: true # Bileşik PK'nın parçası
+                    foreignKeyName: fk_user_roles_role
+                    references: roles(id)
+        - addPrimaryKey:
+            tableName: user_roles
+            columnNames: user_id, role_id
+            constraintName: pk_user_roles
+
+  - changeSet:
+      id: 004-create-authors-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: authors
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: pen_name
+                  type: VARCHAR(100)
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: second_name
+                  type: VARCHAR(100)
+
+  - changeSet:
+      id: 005-create-publishers-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: publishers
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 006-create-book-genres-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: book_genres
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 007-create-books-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50) # EnumType.STRING (ACTIVE, BORROWED, LOST)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 008-create-book-author-join-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: book_author
+            columns:
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_book_author_book
+                    references: books(id)
+              - column:
+                  name: author_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_book_author_author
+                    references: authors(id)
+        - addPrimaryKey:
+            tableName: book_author
+            columnNames: book_id, author_id
+            constraintName: pk_book_author
+
+  - changeSet:
+      id: 009-create-book-publisher-join-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: book_publisher
+            columns:
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_book_publisher_book
+                    references: books(id)
+              - column:
+                  name: publisher_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_book_publisher_publisher
+                    references: publishers(id)
+        - addPrimaryKey:
+            tableName: book_publisher
+            columnNames: book_id, publisher_id
+            constraintName: pk_book_publisher
+
+  - changeSet:
+      id: 010-create-book-genre-join-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: book_genre
+            columns:
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_book_genre_book
+                    references: books(id)
+              - column:
+                  name: genre_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_book_genre_genre
+                    references: book_genres(id) # Tablo adı book_genres
+        - addPrimaryKey:
+            tableName: book_genre
+            columnNames: book_id, genre_id
+            constraintName: pk_book_genre
+
+  - changeSet:
+      id: 011-create-borrowed-books-table
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - createTable:
+            tableName: borrowed_books
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: borrow_date
+                  type: DATE # LocalDate için
+                  constraints:
+                    nullable: false
+              - column:
+                  name: return_date
+                  type: DATE # LocalDate için
+              - column:
+                  name: lost
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_borrowed_books_user
+                    references: users(id)
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_borrowed_books_book
+                    references: books(id)

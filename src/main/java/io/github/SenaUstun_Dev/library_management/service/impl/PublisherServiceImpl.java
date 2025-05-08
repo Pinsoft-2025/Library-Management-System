@@ -28,7 +28,7 @@ public class PublisherServiceImpl implements PublisherService {
 
         publisherRepository.save(publisher);
 
-        return convertTorResponseDto(publisher);
+        return convertToResponseDto(publisher);
     }
 
     @Transactional
@@ -43,7 +43,7 @@ public class PublisherServiceImpl implements PublisherService {
         publisher.setName(request.name());
 
         publisherRepository.save(publisher);
-        return convertTorResponseDto(publisher);
+        return convertToResponseDto(publisher);
     }
 
     @Transactional
@@ -67,22 +67,22 @@ public class PublisherServiceImpl implements PublisherService {
                 ErrorMessages.PUBLISHER_NOT_FOUND,
                 "Publisher with ID " + id + " not found."
         ));
-        return convertTorResponseDto(publisher);
+        return convertToResponseDto(publisher);
     }
 
     @Override
-    public List<PublisherResponse> findAllPublisher() {
+    public List<PublisherResponse> findAllPublishers() {
         List<Publisher> publishers = publisherRepository.findAll();
 
         return publishers.stream()
-                .map(this::convertTorResponseDto)
+                .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
     }
 
 
     //>>>>>>>>>>>>>> HELPER METHODS
 
-    private PublisherResponse convertTorResponseDto(Publisher publisher) {
+    private PublisherResponse convertToResponseDto(Publisher publisher) {
         if (publisher == null) {
             throw new BaseException(HttpStatus.NOT_FOUND,
                     ErrorMessages.PUBLISHER_NOT_FOUND,

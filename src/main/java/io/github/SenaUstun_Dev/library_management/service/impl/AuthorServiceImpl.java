@@ -30,7 +30,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         authorRepository.save(author);
 
-        return convertTorResponseDto(author);
+        return convertToResponseDto(author);
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class AuthorServiceImpl implements AuthorService {
         author.setSecondName(request.secondName());
 
         authorRepository.save(author);
-        return convertTorResponseDto(author);
+        return convertToResponseDto(author);
     }
 
 
@@ -73,7 +73,7 @@ public class AuthorServiceImpl implements AuthorService {
                 ErrorMessages.AUTHOR_NOT_FOUND,
                 "Author with ID " + id + " not found."
         ));
-        return convertTorResponseDto(author);
+        return convertToResponseDto(author);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class AuthorServiceImpl implements AuthorService {
         List<Author> authors = authorRepository.findAll();
 
         return authors.stream()
-                .map(author -> convertTorResponseDto(author))
+                .map(author -> convertToResponseDto(author))
                 .collect(Collectors.toList());
     }
 
@@ -90,14 +90,14 @@ public class AuthorServiceImpl implements AuthorService {
         List<Author> authors = authorRepository.findByCriteria(penName, firstName, secondName);
 
         return authors.stream()
-                .map(author -> convertTorResponseDto(author))
+                .map(author -> convertToResponseDto(author))
                 .collect(Collectors.toList());
     }
 
 
     //>>>>>>>>>>>>>> HELPER METHODS
 
-    private AuthorResponse convertTorResponseDto(Author author) {
+    private AuthorResponse convertToResponseDto(Author author) {
         if (author == null) {
                 throw new BaseException(HttpStatus.NOT_FOUND,
                         ErrorMessages.AUTHOR_NOT_FOUND,

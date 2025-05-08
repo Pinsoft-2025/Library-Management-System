@@ -12,5 +12,5 @@ public interface PublisherService {
     public void deletePublisher(Long id);
 
     public PublisherResponse findPublisherById(Long id);
-    public List<PublisherResponse> findAllPublisher();
+    public List<PublisherResponse> findAllPublishers();
 }

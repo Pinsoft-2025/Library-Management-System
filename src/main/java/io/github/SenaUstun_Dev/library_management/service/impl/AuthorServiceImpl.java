@@ -10,6 +10,7 @@ import io.github.SenaUstun_Dev.library_management.repository.AuthorRepository;
 import io.github.SenaUstun_Dev.library_management.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class AuthorServiceImpl implements AuthorService {
         return convertTorResponseDto(author);
     }
 
+    @Transactional
     @Override
     public AuthorResponse updateAuthor(UpdateAuthorRequest request, Long id) {
         Author author = authorRepository.findById(id).orElseThrow(() -> new BaseException(
@@ -48,6 +50,8 @@ public class AuthorServiceImpl implements AuthorService {
         return convertTorResponseDto(author);
     }
 
+
+    @Transactional
     @Override
     public void deleteAuthor(Long id) {
         if (authorRepository.existsById(id)) {

@@ -3,7 +3,6 @@ package io.github.SenaUstun_Dev.library_management.service;
 import io.github.SenaUstun_Dev.library_management.dto.request.CreateAuthorRequest;
 import io.github.SenaUstun_Dev.library_management.dto.request.UpdateAuthorRequest;
 import io.github.SenaUstun_Dev.library_management.dto.response.AuthorResponse;
-import io.github.SenaUstun_Dev.library_management.entity.Author;
 
 import java.util.List;
 

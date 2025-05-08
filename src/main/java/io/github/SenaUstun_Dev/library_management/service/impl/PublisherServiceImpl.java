@@ -10,12 +10,14 @@ import io.github.SenaUstun_Dev.library_management.repository.PublisherRepository
 import io.github.SenaUstun_Dev.library_management.service.PublisherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Service
 public class PublisherServiceImpl implements PublisherService {
 
     private final PublisherRepository publisherRepository;

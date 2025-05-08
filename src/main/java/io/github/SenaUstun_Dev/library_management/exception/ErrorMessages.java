@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum ErrorMessages {
     AUTHOR_NOT_FOUND("Author not found"),
-    PUBLISHER_NOT_FOUND("Publisher not found");
+    PUBLISHER_NOT_FOUND("Publisher not found"),
+    BOOKGENRE_NOT_FOUND("Book-genre not found");
 
     private final String message;
 

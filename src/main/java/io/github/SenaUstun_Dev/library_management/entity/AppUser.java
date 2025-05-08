@@ -40,7 +40,7 @@ public class AppUser {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "borrowing_privilege", nullable = false)
-    private BorrowingPrivilege borrowingPrivilege;
+    private BorrowingPrivilege borrowingPrivilege = BorrowingPrivilege.FULL;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

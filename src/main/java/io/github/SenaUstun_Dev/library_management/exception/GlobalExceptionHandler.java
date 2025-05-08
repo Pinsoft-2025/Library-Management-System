@@ -1,4 +1,4 @@
-package io.github.SenaUstun_Dev.library_management.config;
+package io.github.SenaUstun_Dev.library_management.exception;
 
 import io.github.SenaUstun_Dev.library_management.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;

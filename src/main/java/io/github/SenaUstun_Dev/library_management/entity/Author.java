@@ -1,6 +1,7 @@
 package io.github.SenaUstun_Dev.library_management.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Entity
 @Table(name = "authors")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {

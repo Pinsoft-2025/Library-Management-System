@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorMessages {
-    PRODUCT_NOT_FOUND("Product Not Found"); //örnektir, hata vermesin diye silinmemiştir
+    AUTHOR_NOT_FOUND("Author not found");
 
     private final String message;
 

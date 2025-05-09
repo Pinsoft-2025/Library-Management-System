@@ -2,20 +2,20 @@ package io.github.SenaUstun_Dev.library_management.entity;
 
 import io.github.SenaUstun_Dev.library_management.entity.enums.BookStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "books")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"authors", "publishers", "genres", "borrowedBooks"})
+@EqualsAndHashCode(of = "id")
 public class Book {
 
     @Id
@@ -29,7 +29,7 @@ public class Book {
     @Column(name = "status", nullable = false)
     private BookStatus status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "book_author",
             joinColumns = @JoinColumn(name = "book_id"),
@@ -37,7 +37,7 @@ public class Book {
     )
     private Set<Author> authors = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "book_publisher",
             joinColumns = @JoinColumn(name = "book_id"),
@@ -45,7 +45,7 @@ public class Book {
     )
     private Set<Publisher> publishers = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "book_genre",
             joinColumns = @JoinColumn(name = "book_id"),

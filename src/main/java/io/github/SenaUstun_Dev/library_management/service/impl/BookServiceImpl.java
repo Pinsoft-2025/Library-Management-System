@@ -1,9 +1,6 @@
 package io.github.SenaUstun_Dev.library_management.service.impl;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -182,6 +179,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public BookResponse findBookById(Long id) {
         Book book = bookRepository.findById(id)
@@ -193,6 +191,7 @@ public class BookServiceImpl implements BookService {
         return convertToResponseDto(book);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public BookResponse findBookByName(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -207,6 +206,7 @@ public class BookServiceImpl implements BookService {
         return convertToResponseDto(book);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findAll() {
         List<Book> books = bookRepository.findAll();
@@ -215,6 +215,7 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findBookByAuthor(String authorCriteria) {
         if (authorCriteria == null || authorCriteria.trim().isEmpty()) {
@@ -238,6 +239,7 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findBookByGenre(String genreName) {
         if (genreName == null || genreName.trim().isEmpty()) {
@@ -260,6 +262,7 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findBookByPublisher(String publisherName) {
         if (publisherName == null || publisherName.trim().isEmpty()) {
@@ -289,20 +292,29 @@ public class BookServiceImpl implements BookService {
         if (book == null) {
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Book entity is null during conversion.");
         }
-        
+
         // Entity'leri DTO'lara dönüştürme
-        Set<AuthorResponse> authorResponses = book.getAuthors().stream()
-                .map(this::convertToAuthorResponse)
-                .collect(Collectors.toSet());
-                
-        Set<PublisherResponse> publisherResponses = book.getPublishers().stream()
-                .map(this::convertToPublisherResponse)
-                .collect(Collectors.toSet());
-                
-        Set<BookGenreResponse> genreResponses = book.getGenres().stream()
-                .map(this::convertToGenreResponse)
-                .collect(Collectors.toSet());
-        
+        Set<AuthorResponse> authorResponses = (book.getAuthors() == null) ?
+                Collections.emptySet() :
+                book.getAuthors().stream()
+                        .filter(Objects::nonNull)
+                        .map(this::convertToAuthorResponse)
+                        .collect(Collectors.toSet());
+
+        Set<PublisherResponse> publisherResponses = (book.getPublishers() == null) ?
+                Collections.emptySet() :
+                book.getPublishers().stream()
+                        .filter(Objects::nonNull)
+                        .map(this::convertToPublisherResponse)
+                        .collect(Collectors.toSet());
+
+        Set<BookGenreResponse> genreResponses = (book.getGenres() == null) ?
+                Collections.emptySet() :
+                book.getGenres().stream()
+                        .filter(Objects::nonNull)
+                        .map(this::convertToGenreResponse)
+                        .collect(Collectors.toSet());
+
         return BookResponse.builder()
                 .id(book.getId())
                 .name(book.getName())
@@ -312,7 +324,7 @@ public class BookServiceImpl implements BookService {
                 .genres(genreResponses)
                 .build();
     }
-    
+
     private AuthorResponse convertToAuthorResponse(Author author) {
         return AuthorResponse.builder()
                 .id(author.getId())
@@ -321,14 +333,14 @@ public class BookServiceImpl implements BookService {
                 .secondName(author.getSecondName())
                 .build();
     }
-    
+
     private PublisherResponse convertToPublisherResponse(Publisher publisher) {
         return PublisherResponse.builder()
                 .id(publisher.getId())
                 .name(publisher.getName())
                 .build();
     }
-    
+
     private BookGenreResponse convertToGenreResponse(BookGenre genre) {
         return BookGenreResponse.builder()
                 .id(genre.getId())

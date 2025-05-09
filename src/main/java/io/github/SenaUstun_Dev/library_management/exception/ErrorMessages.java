@@ -7,7 +7,8 @@ public enum ErrorMessages {
     AUTHOR_NOT_FOUND("Author not found"),
     PUBLISHER_NOT_FOUND("Publisher not found"),
     BOOKGENRE_NOT_FOUND("Book-genre not found"),
-    BOOK_NOT_FOUND("Book not found");
+    BOOK_NOT_FOUND("Book not found"),
+    RESOURCE_NOT_FOUND("Resource Not Found Exception");
 
     private final String message;
 

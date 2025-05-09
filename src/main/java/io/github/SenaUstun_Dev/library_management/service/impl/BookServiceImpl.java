@@ -1,13 +1,26 @@
 package io.github.SenaUstun_Dev.library_management.service.impl;
 
-import io.github.SenaUstun_Dev.library_management.exception.BaseException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import io.github.SenaUstun_Dev.library_management.dto.request.CreateBookRequest;
 import io.github.SenaUstun_Dev.library_management.dto.request.UpdateBookRequest;
+import io.github.SenaUstun_Dev.library_management.dto.response.AuthorResponse;
+import io.github.SenaUstun_Dev.library_management.dto.response.BookGenreResponse;
 import io.github.SenaUstun_Dev.library_management.dto.response.BookResponse;
+import io.github.SenaUstun_Dev.library_management.dto.response.PublisherResponse;
 import io.github.SenaUstun_Dev.library_management.entity.Author;
 import io.github.SenaUstun_Dev.library_management.entity.Book;
 import io.github.SenaUstun_Dev.library_management.entity.BookGenre;
 import io.github.SenaUstun_Dev.library_management.entity.Publisher;
+import io.github.SenaUstun_Dev.library_management.exception.BaseException;
 import io.github.SenaUstun_Dev.library_management.exception.ErrorMessages;
 import io.github.SenaUstun_Dev.library_management.repository.AuthorRepository;
 import io.github.SenaUstun_Dev.library_management.repository.BookGenreRepository;
@@ -15,15 +28,6 @@ import io.github.SenaUstun_Dev.library_management.repository.BookRepository;
 import io.github.SenaUstun_Dev.library_management.repository.PublisherRepository;
 import io.github.SenaUstun_Dev.library_management.service.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,13 +51,53 @@ public class BookServiceImpl implements BookService {
             throw new BaseException(HttpStatus.CONFLICT, "Book with name '" + request.name() + "' already exists.");
         }
 
+        // İlişkili entity'leri ID'lerine göre bulma
+        Set<Author> authors = new HashSet<>();
+        if (request.authorIds() != null && !request.authorIds().isEmpty()) {
+            for (Long authorId : request.authorIds()) {
+                Author author = authorRepository.findById(authorId)
+                        .orElseThrow(() -> new BaseException(
+                                HttpStatus.NOT_FOUND,
+                                ErrorMessages.AUTHOR_NOT_FOUND,
+                                "Yazar ID: " + authorId + " bulunamadı."
+                        ));
+                authors.add(author);
+            }
+        }
+
+        Set<Publisher> publishers = new HashSet<>();
+        if (request.publisherIds() != null && !request.publisherIds().isEmpty()) {
+            for (Long publisherId : request.publisherIds()) {
+                Publisher publisher = publisherRepository.findById(publisherId)
+                        .orElseThrow(() -> new BaseException(
+                                HttpStatus.NOT_FOUND,
+                                ErrorMessages.PUBLISHER_NOT_FOUND,
+                                "Yayıncı ID: " + publisherId + " bulunamadı."
+                        ));
+                publishers.add(publisher);
+            }
+        }
+
+        Set<BookGenre> genres = new HashSet<>();
+        if (request.genreIds() != null && !request.genreIds().isEmpty()) {
+            for (Long genreId : request.genreIds()) {
+                BookGenre genre = bookGenreRepository.findById(genreId)
+                        .orElseThrow(() -> new BaseException(
+                                HttpStatus.NOT_FOUND,
+                                ErrorMessages.BOOKGENRE_NOT_FOUND,
+                                "Kitap türü ID: " + genreId + " bulunamadı."
+                        ));
+                genres.add(genre);
+            }
+        }
+
         // Book nesnesi oluştur
         Book book = Book.builder()
                 .name(request.name())
                 .status(request.status())
-                .authors(request.authors() != null ? request.authors() : new HashSet<>())
-                .publishers(request.publisher() != null ? request.publisher() : new HashSet<>())
-                .genres(request.genres() != null ? request.genres() : new HashSet<>())
+                .authors(authors)
+                .publishers(publishers)
+                .genres(genres)
                 .build();
 
         Book savedBook = bookRepository.save(book);
@@ -79,14 +123,46 @@ public class BookServiceImpl implements BookService {
         }
 
         // İlişkili entity'leri güncelle
-        if (request.authors() != null) {
-            bookToUpdate.setAuthors(request.authors());
+        if (request.authorIds() != null) {
+            Set<Author> authors = new HashSet<>();
+            for (Long authorId : request.authorIds()) {
+                Author author = authorRepository.findById(authorId)
+                        .orElseThrow(() -> new BaseException(
+                                HttpStatus.NOT_FOUND,
+                                ErrorMessages.AUTHOR_NOT_FOUND,
+                                "Yazar ID: " + authorId + " bulunamadı."
+                        ));
+                authors.add(author);
+            }
+            bookToUpdate.setAuthors(authors);
         }
-        if (request.publisher() != null) {
-            bookToUpdate.setPublishers(request.publisher());
+
+        if (request.publisherIds() != null) {
+            Set<Publisher> publishers = new HashSet<>();
+            for (Long publisherId : request.publisherIds()) {
+                Publisher publisher = publisherRepository.findById(publisherId)
+                        .orElseThrow(() -> new BaseException(
+                                HttpStatus.NOT_FOUND,
+                                ErrorMessages.PUBLISHER_NOT_FOUND,
+                                "Yayıncı ID: " + publisherId + " bulunamadı."
+                        ));
+                publishers.add(publisher);
+            }
+            bookToUpdate.setPublishers(publishers);
         }
-        if (request.genres() != null) {
-            bookToUpdate.setGenres(request.genres());
+
+        if (request.genreIds() != null) {
+            Set<BookGenre> genres = new HashSet<>();
+            for (Long genreId : request.genreIds()) {
+                BookGenre genre = bookGenreRepository.findById(genreId)
+                        .orElseThrow(() -> new BaseException(
+                                HttpStatus.NOT_FOUND,
+                                ErrorMessages.BOOKGENRE_NOT_FOUND,
+                                "Kitap türü ID: " + genreId + " bulunamadı."
+                        ));
+                genres.add(genre);
+            }
+            bookToUpdate.setGenres(genres);
         }
 
         Book updatedBook = bookRepository.save(bookToUpdate);
@@ -213,12 +289,50 @@ public class BookServiceImpl implements BookService {
         if (book == null) {
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Book entity is null during conversion.");
         }
+        
+        // Entity'leri DTO'lara dönüştürme
+        Set<AuthorResponse> authorResponses = book.getAuthors().stream()
+                .map(this::convertToAuthorResponse)
+                .collect(Collectors.toSet());
+                
+        Set<PublisherResponse> publisherResponses = book.getPublishers().stream()
+                .map(this::convertToPublisherResponse)
+                .collect(Collectors.toSet());
+                
+        Set<BookGenreResponse> genreResponses = book.getGenres().stream()
+                .map(this::convertToGenreResponse)
+                .collect(Collectors.toSet());
+        
         return BookResponse.builder()
+                .id(book.getId())
                 .name(book.getName())
                 .status(book.getStatus())
-                .authors(book.getAuthors())
-                .publisher(book.getPublishers())
-                .genres(book.getGenres())
+                .authors(authorResponses)
+                .publishers(publisherResponses)
+                .genres(genreResponses)
+                .build();
+    }
+    
+    private AuthorResponse convertToAuthorResponse(Author author) {
+        return AuthorResponse.builder()
+                .id(author.getId())
+                .penName(author.getPenName())
+                .firstName(author.getFirstName())
+                .secondName(author.getSecondName())
+                .build();
+    }
+    
+    private PublisherResponse convertToPublisherResponse(Publisher publisher) {
+        return PublisherResponse.builder()
+                .id(publisher.getId())
+                .name(publisher.getName())
+                .build();
+    }
+    
+    private BookGenreResponse convertToGenreResponse(BookGenre genre) {
+        return BookGenreResponse.builder()
+                .id(genre.getId())
+                .name(genre.getName())
                 .build();
     }
 }

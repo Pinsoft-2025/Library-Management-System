@@ -2,16 +2,16 @@ package io.github.SenaUstun_Dev.library_management.entity;
 
 import io.github.SenaUstun_Dev.library_management.entity.enums.BorrowingPrivilege;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"borrowedBooks"})
+@EqualsAndHashCode(of = "id")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

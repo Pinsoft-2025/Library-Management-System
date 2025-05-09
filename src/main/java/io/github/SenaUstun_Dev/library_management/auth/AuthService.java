@@ -1,23 +1,24 @@
 // AuthService.java
 package io.github.SenaUstun_Dev.library_management.auth;
 
-import io.github.SenaUstun_Dev.library_management.dto.request.LoginRequest;
-import io.github.SenaUstun_Dev.library_management.dto.request.RegisterRequest;
-import io.github.SenaUstun_Dev.library_management.dto.response.LoginResponse;
-import io.github.SenaUstun_Dev.library_management.auth.jwt_filter.JwtService;
-import io.github.SenaUstun_Dev.library_management.entity.AppUser;
-import io.github.SenaUstun_Dev.library_management.entity.Role;
-import io.github.SenaUstun_Dev.library_management.repository.AppUserRepository;
-import io.github.SenaUstun_Dev.library_management.repository.RoleRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import io.github.SenaUstun_Dev.library_management.auth.jwt_filter.JwtService;
+import io.github.SenaUstun_Dev.library_management.dto.request.LoginRequest;
+import io.github.SenaUstun_Dev.library_management.dto.request.RegisterRequest;
+import io.github.SenaUstun_Dev.library_management.dto.response.LoginResponse;
+import io.github.SenaUstun_Dev.library_management.entity.AppUser;
+import io.github.SenaUstun_Dev.library_management.entity.Role;
+import io.github.SenaUstun_Dev.library_management.repository.AppUserRepository;
+import io.github.SenaUstun_Dev.library_management.repository.RoleRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -45,13 +46,15 @@ public class AuthService {
 
     public AppUser register(RegisterRequest registerRequest) {
         if (userRepository.findByUsername(registerRequest.username()).isPresent()) {
-
             throw new IllegalArgumentException("Kullanıcı adı zaten kullanımda: " + registerRequest.username());
         }
 
         AppUser newUser = new AppUser();
         newUser.setUsername(registerRequest.username());
         newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
+        newUser.setEmail(registerRequest.email());
+        newUser.setFirstName(registerRequest.firstName());
+        newUser.setLastName(registerRequest.lastName());
 
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName("ROLE_USER")

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
@@ -17,4 +18,6 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     List<Author> findByCriteria(@Param("penName") String penName,
                                 @Param("firstName") String firstName,
                                 @Param("secondName") String secondName);
+
+    Set<Author> findByPenNameContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrSecondNameContainingIgnoreCase(String authorCriteria, String authorCriteria1, String authorCriteria2);
 }

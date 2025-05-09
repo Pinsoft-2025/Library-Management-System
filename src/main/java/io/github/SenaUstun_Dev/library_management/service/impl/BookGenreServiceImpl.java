@@ -74,14 +74,11 @@ public class BookGenreServiceImpl implements BookGenreService {
 
     @Override
     public BookGenreResponse findBookGenreByName(String name) {
-        BookGenre genre = bookGenreRepository.findByNameIgnoreCase(name);
-        if (genre == null) {
-            throw new BaseException(
-                    HttpStatus.NOT_FOUND,
-                    ErrorMessages.BOOKGENRE_NOT_FOUND,
-                    "Book genre with name '" + name + "' not found."
-            );
-        }
+        BookGenre genre = bookGenreRepository.findByNameIgnoreCase(name).orElseThrow(() -> new BaseException(
+                HttpStatus.NOT_FOUND,
+                ErrorMessages.BOOKGENRE_NOT_FOUND,
+                "Book genre with name '" + name + "' not found."
+        ));
 
         return convertToResponseDto(genre);
     }

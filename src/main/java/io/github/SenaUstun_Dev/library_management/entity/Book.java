@@ -2,6 +2,7 @@ package io.github.SenaUstun_Dev.library_management.entity;
 
 import io.github.SenaUstun_Dev.library_management.entity.enums.BookStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "books")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {

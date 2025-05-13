@@ -21,6 +21,9 @@ public interface BorrowedBookService {
     
     BorrowedBookResponse borrowBook(AppUser user, BorrowBookRequest request);
     
+    // Kitap iade işlemi
+    BorrowedBookResponse returnBook(AppUser user, Long bookId);
+    
     // Kullanıcının aktif olarak ödünç aldığı kitaplar
     List<BorrowedBookResponse> getCurrentlyBorrowedBooks(AppUser user);
     

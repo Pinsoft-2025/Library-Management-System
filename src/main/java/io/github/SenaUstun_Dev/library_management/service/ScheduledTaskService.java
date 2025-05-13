@@ -45,8 +45,8 @@ public class ScheduledTaskService {
 
         LocalDate today = LocalDate.now();
 
-        // Veritabanından doğrudan iade tarihi geçmiş ve kayıp olarak işaretlenmemiş kitapları getir
-        List<BorrowedBook> overdueBorrowedBooks = borrowedBookRepository.findByReturnDateLessThanAndLostIsFalseAndReturnDateIsNotNull(today);
+        // Veritabanından doğrudan son iade tarihi geçmiş, iade edilmemiş ve kayıp olarak işaretlenmemiş kitapları getir
+        List<BorrowedBook> overdueBorrowedBooks = borrowedBookRepository.findByDueDateLessThanAndLostIsFalseAndActualReturnDateIsNull(today);
 
         log.info("İade tarihi geçmiş ve işaretlenmemiş ödünç kitap sayısı: {}", overdueBorrowedBooks.size());
 

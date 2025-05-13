@@ -74,12 +74,12 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
         
         // Kullanıcının ödünç alma iznine göre iade tarihini hesaplama
         LocalDate borrowDate = LocalDate.now();
-        LocalDate returnDate;
+        LocalDate dueDate;
         
         if (user.getBorrowingPrivilege() == BorrowingPrivilege.FULL) {
-            returnDate = borrowDate.plusDays(30);
+            dueDate = borrowDate.plusDays(30);
         } else if (user.getBorrowingPrivilege() == BorrowingPrivilege.LIMITED) {
-            returnDate = borrowDate.plusDays(15);
+            dueDate = borrowDate.plusDays(15);
         } else {
             throw new BaseException(
                     HttpStatus.INTERNAL_SERVER_ERROR, 
@@ -93,7 +93,8 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
         borrowedBook.setUser(user);
         borrowedBook.setBook(book);
         borrowedBook.setBorrowDate(borrowDate);
-        borrowedBook.setReturnDate(returnDate);
+        borrowedBook.setDueDate(dueDate);
+        borrowedBook.setActualReturnDate(null); // İade edilmediği için null
         borrowedBook.setLost(false);
         
         // Kitabın durumunu güncelleme
@@ -106,12 +107,42 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
         // Response oluşturma
         return convertToResponse(savedBorrowedBook);
     }
+
+    @Override
+    @Transactional
+    public BorrowedBookResponse returnBook(AppUser user, Long bookId) {
+        // Kullanıcının aktif olarak ödünç aldığı kitapları getir
+        List<BorrowedBook> activeBorrowedBooks = borrowedBookRepository.findByUserAndActualReturnDateIsNull(user);
+        
+        // Kullanıcının iade etmek istediği kitabı bul
+        BorrowedBook borrowedBook = activeBorrowedBooks.stream()
+                .filter(b -> b.getBook().getId().equals(bookId))
+                .findFirst()
+                .orElseThrow(() -> new BaseException(
+                        HttpStatus.NOT_FOUND,
+                        ErrorMessages.BOOK_NOT_FOUND,
+                        "Bu kitap sizin tarafınızdan ödünç alınmamış veya zaten iade edilmiş."
+                ));
+        
+        // İade tarihini şimdiki tarih olarak ayarla
+        borrowedBook.setActualReturnDate(LocalDate.now());
+        
+        // Kitabın durumunu ACTIVE olarak güncelle
+        Book book = borrowedBook.getBook();
+        book.setStatus(BookStatus.ACTIVE);
+        bookRepository.save(book);
+        
+        // BorrowedBook kaydını güncelle
+        BorrowedBook updatedBorrowedBook = borrowedBookRepository.save(borrowedBook);
+        
+        return convertToResponse(updatedBorrowedBook);
+    }
     
     @Override
     @Transactional(readOnly = true)
     public List<BorrowedBookResponse> getCurrentlyBorrowedBooks(AppUser user) {
         // Kullanıcının şu anda ödünç aldığı kitapları al
-        List<BorrowedBook> currentlyBorrowedBooks = borrowedBookRepository.findByUserAndReturnDateIsNull(user);
+        List<BorrowedBook> currentlyBorrowedBooks = borrowedBookRepository.findByUserAndActualReturnDateIsNull(user);
         
         // Boş veya dolu liste olduğunu gözetmeksizin sonuçları DTO'ya dönüştür ve döndür
         return currentlyBorrowedBooks.stream()
@@ -123,7 +154,7 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
     @Transactional(readOnly = true)
     public List<BorrowedBookResponse> getBorrowedBookHistory(AppUser user) {
         // Kullanıcının geçmiş ödünç aldığı kitapları al
-        List<BorrowedBook> borrowedBookHistory = borrowedBookRepository.findByUserAndReturnDateIsNotNull(user);
+        List<BorrowedBook> borrowedBookHistory = borrowedBookRepository.findByUserAndActualReturnDateIsNotNull(user);
         
         // Boş veya dolu liste olduğunu gözetmeksizin sonuçları DTO'ya dönüştür ve döndür
         return borrowedBookHistory.stream()
@@ -138,7 +169,7 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
         AppUser user = userService.findUserEntityById(userId);
         
         // Kullanıcının şu anda ödünç aldığı kitapları al
-        List<BorrowedBook> currentlyBorrowedBooks = borrowedBookRepository.findByUserIdAndReturnDateIsNull(userId);
+        List<BorrowedBook> currentlyBorrowedBooks = borrowedBookRepository.findByUserIdAndActualReturnDateIsNull(userId);
         
         // Boş veya dolu liste olduğunu gözetmeksizin sonuçları DTO'ya dönüştür ve döndür
         return currentlyBorrowedBooks.stream()
@@ -153,7 +184,7 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
         AppUser user = userService.findUserEntityById(userId);
         
         // Kullanıcının geçmiş ödünç aldığı kitapları al
-        List<BorrowedBook> borrowedBookHistory = borrowedBookRepository.findByUserIdAndReturnDateIsNotNull(userId);
+        List<BorrowedBook> borrowedBookHistory = borrowedBookRepository.findByUserIdAndActualReturnDateIsNotNull(userId);
         
         // Boş veya dolu liste olduğunu gözetmeksizin sonuçları DTO'ya dönüştür ve döndür
         return borrowedBookHistory.stream()
@@ -191,7 +222,8 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
         return BorrowedBookResponse.builder()
                 .id(borrowedBook.getId())
                 .borrowDate(borrowedBook.getBorrowDate())
-                .returnDate(borrowedBook.getReturnDate())
+                .dueDate(borrowedBook.getDueDate())
+                .actualReturnDate(borrowedBook.getActualReturnDate())
                 .lost(borrowedBook.isLost())
                 .user(userResponse)
                 .book(bookResponse)

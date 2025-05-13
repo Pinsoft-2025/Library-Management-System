@@ -46,6 +46,20 @@ public class BorrowedBookController {
         BorrowedBookResponse response = borrowedBookService.borrowBook(userDetails.getUser(), request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    
+    @Operation(summary = "Kitap iade etme", description = "Kullanıcının ödünç aldığı kitabı iade etmesini sağlar")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kitap başarıyla iade edildi"),
+            @ApiResponse(responseCode = "404", description = "Kitap bulunamadı veya sizin tarafınızdan ödünç alınmamış")
+    })
+    @PostMapping("/{bookId}/return")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<BorrowedBookResponse> returnBook(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long bookId) {
+        BorrowedBookResponse response = borrowedBookService.returnBook(userDetails.getUser(), bookId);
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(summary = "Kullanıcının aktif ödünç kitapları", description = "Kullanıcının şu anda ödünç aldığı kitapları listeler")
     @ApiResponses(value = {

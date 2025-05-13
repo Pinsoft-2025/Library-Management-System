@@ -14,23 +14,23 @@ import io.github.SenaUstun_Dev.library_management.entity.BorrowedBook;
 @Repository
 public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Long> {
     // Aktif olarak ödünç alınan kitaplar (iade edilmemiş)
-    List<BorrowedBook> findByUserAndReturnDateIsNull(AppUser user);
+    List<BorrowedBook> findByUserAndActualReturnDateIsNull(AppUser user);
     
     // Geçmiş ödünç kitap kayıtları (iade edilmiş)
-    List<BorrowedBook> findByUserAndReturnDateIsNotNull(AppUser user);
+    List<BorrowedBook> findByUserAndActualReturnDateIsNotNull(AppUser user);
     
     // Belli bir kullanıcının aktif ödünç kitapları - Admin için
-    List<BorrowedBook> findByUserIdAndReturnDateIsNull(Long userId);
+    List<BorrowedBook> findByUserIdAndActualReturnDateIsNull(Long userId);
     
     // Belli bir kullanıcının geçmiş ödünç kitapları - Admin için
-    List<BorrowedBook> findByUserIdAndReturnDateIsNotNull(Long userId);
+    List<BorrowedBook> findByUserIdAndActualReturnDateIsNotNull(Long userId);
     
     // İade tarihi geçmiş ve kayıp olarak işaretlenmemiş ödünç kitapları bul
-    List<BorrowedBook> findByReturnDateLessThanAndLostIsFalseAndReturnDateIsNotNull(LocalDate date);
+    List<BorrowedBook> findByDueDateLessThanAndLostIsFalseAndActualReturnDateIsNull(LocalDate date);
     
     // Kayıp olarak işaretlenmiş tüm ödünç kitapları bul
     List<BorrowedBook> findByLostIsTrue();
     
-    @Query("SELECT COUNT(b) FROM BorrowedBook b WHERE b.user = :user AND b.returnDate IS NULL")
+    @Query("SELECT COUNT(b) FROM BorrowedBook b WHERE b.user = :user AND b.actualReturnDate IS NULL")
     int countActiveBorrowedBooksByUser(@Param("user") AppUser user);
 }

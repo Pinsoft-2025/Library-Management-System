@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 012-rename-return-date-column
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - renameColumn:
+            tableName: borrowed_books
+            oldColumnName: return_date
+            newColumnName: due_date
+            columnDataType: DATE
+
+  - changeSet:
+      id: 013-add-actual-return-date-column
+      author: SenaUstun-Dev (Sena)
+      changes:
+        - addColumn:
+            tableName: borrowed_books
+            columns:
+              - column:
+                  name: actual_return_date
+                  type: DATE
+                  constraints:
+                    nullable: true 

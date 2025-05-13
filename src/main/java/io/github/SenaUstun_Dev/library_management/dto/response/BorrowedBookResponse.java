@@ -8,7 +8,8 @@ import lombok.Builder;
 public record BorrowedBookResponse(
     Long id,
     LocalDate borrowDate,
-    LocalDate returnDate,
+    LocalDate dueDate,
+    LocalDate actualReturnDate,
     boolean lost,
     AppUserResponse user,
     BookResponse book

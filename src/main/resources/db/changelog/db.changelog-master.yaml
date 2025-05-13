@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/create-table.yaml
   - include:
       file: db/changelog/insert-initial-roles.yaml
+  - include:
+      file: db/changelog/add-actual-return-date.yaml

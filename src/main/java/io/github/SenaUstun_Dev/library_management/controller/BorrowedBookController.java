@@ -1,5 +1,7 @@
 package io.github.SenaUstun_Dev.library_management.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,8 +22,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/borrowed-books")
@@ -90,6 +90,17 @@ public class BorrowedBookController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BorrowedBookResponse>> getUserBorrowedBookHistory(@PathVariable Long userId) {
         List<BorrowedBookResponse> response = borrowedBookService.getUserBorrowedBookHistory(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "[ADMIN] Kayıp kitapları görüntüleme", description = "Kayıp olarak işaretlenen tüm kitapları listeler")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kayıp kitaplar başarıyla listelendi")
+    })
+    @GetMapping("/admin/lost")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<BorrowedBookResponse>> getAllLostBooks() {
+        List<BorrowedBookResponse> response = borrowedBookService.getAllLostBooks();
         return ResponseEntity.ok(response);
     }
 } 

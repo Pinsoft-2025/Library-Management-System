@@ -32,4 +32,7 @@ public interface BorrowedBookService {
     
     // [ADMIN] Herhangi bir kullanıcının geçmiş ödünç kitap geçmişi
     List<BorrowedBookResponse> getUserBorrowedBookHistory(Long userId);
+    
+    // [ADMIN] Kayıp olarak işaretlenmiş tüm ödünç kitapları getir
+    List<BorrowedBookResponse> getAllLostBooks();
 }

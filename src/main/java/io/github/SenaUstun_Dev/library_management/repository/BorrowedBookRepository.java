@@ -28,6 +28,9 @@ public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Long
     // İade tarihi geçmiş ve kayıp olarak işaretlenmemiş ödünç kitapları bul
     List<BorrowedBook> findByReturnDateLessThanAndLostIsFalseAndReturnDateIsNotNull(LocalDate date);
     
+    // Kayıp olarak işaretlenmiş tüm ödünç kitapları bul
+    List<BorrowedBook> findByLostIsTrue();
+    
     @Query("SELECT COUNT(b) FROM BorrowedBook b WHERE b.user = :user AND b.returnDate IS NULL")
     int countActiveBorrowedBooksByUser(@Param("user") AppUser user);
 }

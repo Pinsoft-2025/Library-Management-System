@@ -161,6 +161,18 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
                 .collect(Collectors.toList());
     }
     
+    @Override
+    @Transactional(readOnly = true)
+    public List<BorrowedBookResponse> getAllLostBooks() {
+        // Kayıp olarak işaretlenmiş tüm ödünç kitapları al
+        List<BorrowedBook> lostBooks = borrowedBookRepository.findByLostIsTrue();
+        
+        // DTO'ya dönüştür ve döndür
+        return lostBooks.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+    
     // Entity'i DTO'ya dönüştürme
     private BorrowedBookResponse convertToResponse(BorrowedBook borrowedBook) {
         AppUserResponse userResponse = new AppUserResponse(

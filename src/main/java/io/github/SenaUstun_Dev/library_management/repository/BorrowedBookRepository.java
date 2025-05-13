@@ -1,5 +1,6 @@
 package io.github.SenaUstun_Dev.library_management.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,9 @@ public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Long
     
     // Belli bir kullanıcının geçmiş ödünç kitapları - Admin için
     List<BorrowedBook> findByUserIdAndReturnDateIsNotNull(Long userId);
+    
+    // İade tarihi geçmiş ve kayıp olarak işaretlenmemiş ödünç kitapları bul
+    List<BorrowedBook> findByReturnDateLessThanAndLostIsFalseAndReturnDateIsNotNull(LocalDate date);
     
     @Query("SELECT COUNT(b) FROM BorrowedBook b WHERE b.user = :user AND b.returnDate IS NULL")
     int countActiveBorrowedBooksByUser(@Param("user") AppUser user);

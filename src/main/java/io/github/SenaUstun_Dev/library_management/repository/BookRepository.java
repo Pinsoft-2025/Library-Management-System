@@ -11,6 +11,7 @@ import io.github.SenaUstun_Dev.library_management.entity.Author;
 import io.github.SenaUstun_Dev.library_management.entity.Book;
 import io.github.SenaUstun_Dev.library_management.entity.BookGenre;
 import io.github.SenaUstun_Dev.library_management.entity.Publisher;
+import io.github.SenaUstun_Dev.library_management.entity.enums.BookStatus;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
@@ -21,4 +22,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByAuthorsIn(Set<Author> matchingAuthors);
 
     Optional<Book> findByNameIgnoreCase(String name);
+    
+    List<Book> findByStatus(BookStatus status);
 }

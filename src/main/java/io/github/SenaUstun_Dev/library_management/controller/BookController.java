@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.SenaUstun_Dev.library_management.dto.request.CreateBookRequest;
 import io.github.SenaUstun_Dev.library_management.dto.request.UpdateBookRequest;
 import io.github.SenaUstun_Dev.library_management.dto.response.BookResponse;
+import io.github.SenaUstun_Dev.library_management.service.BookExportService;
 import io.github.SenaUstun_Dev.library_management.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
     private final BookService bookService;
+    private final BookExportService bookExportService;
 
     @GetMapping
     @Operation(summary = "Tüm kitapları listele", description = "Mevcut tüm kitapların listesini döndürür.")
@@ -142,5 +146,59 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Excel Export Endpoints
+    
+    @GetMapping("/admin/export/all")
+    @Operation(summary = "Tüm kitapları Excel'e aktar", 
+              description = "Veritabanındaki tüm kitapların Excel tablosunu oluşturur ve indirir. Admin rolü gerektirir.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Excel dosyası başarıyla oluşturuldu ve indirildi"),
+            @ApiResponse(responseCode = "403", description = "Erişim reddedildi (admin rolü gerekli)"),
+            @ApiResponse(responseCode = "500", description = "Dosya oluşturulurken bir hata oluştu")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportAllBooksToExcel(HttpServletResponse response) {
+        bookExportService.exportAllBooksToExcel(response);
+    }
+    
+    @GetMapping("/admin/export/lost")
+    @Operation(summary = "Kayıp kitapları Excel'e aktar",
+              description = "Kayıp durumdaki tüm kitapların Excel tablosunu oluşturur ve indirir. Admin rolü gerektirir.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Excel dosyası başarıyla oluşturuldu ve indirildi"),
+            @ApiResponse(responseCode = "403", description = "Erişim reddedildi (admin rolü gerekli)"),
+            @ApiResponse(responseCode = "500", description = "Dosya oluşturulurken bir hata oluştu")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportAllLostBooksToExcel(HttpServletResponse response) {
+        bookExportService.exportAllLostBooksToExcel(response);
+    }
+    
+    @GetMapping("/admin/export/borrowed")
+    @Operation(summary = "Ödünç alınmış kitapları Excel'e aktar",
+              description = "Ödünç alınmış durumdaki tüm kitapların Excel tablosunu oluşturur ve indirir. Admin rolü gerektirir.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Excel dosyası başarıyla oluşturuldu ve indirildi"),
+            @ApiResponse(responseCode = "403", description = "Erişim reddedildi (admin rolü gerekli)"),
+            @ApiResponse(responseCode = "500", description = "Dosya oluşturulurken bir hata oluştu")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportAllBorrowedBooksToExcel(HttpServletResponse response) {
+        bookExportService.exportAllBorrowedBooksToExcel(response);
+    }
+    
+    @GetMapping("/admin/export/active")
+    @Operation(summary = "Aktif kitapları Excel'e aktar",
+              description = "Aktif durumdaki tüm kitapların Excel tablosunu oluşturur ve indirir. Admin rolü gerektirir.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Excel dosyası başarıyla oluşturuldu ve indirildi"),
+            @ApiResponse(responseCode = "403", description = "Erişim reddedildi (admin rolü gerekli)"),
+            @ApiResponse(responseCode = "500", description = "Dosya oluşturulurken bir hata oluştu")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public void exportAllActiveBooksToExcel(HttpServletResponse response) {
+        bookExportService.exportAllActiveBooksToExcel(response);
     }
 }

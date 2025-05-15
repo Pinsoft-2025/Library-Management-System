@@ -1,6 +1,10 @@
 package io.github.SenaUstun_Dev.library_management.service.impl;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -17,6 +21,7 @@ import io.github.SenaUstun_Dev.library_management.entity.Author;
 import io.github.SenaUstun_Dev.library_management.entity.Book;
 import io.github.SenaUstun_Dev.library_management.entity.BookGenre;
 import io.github.SenaUstun_Dev.library_management.entity.Publisher;
+import io.github.SenaUstun_Dev.library_management.entity.enums.BookStatus;
 import io.github.SenaUstun_Dev.library_management.exception.BaseException;
 import io.github.SenaUstun_Dev.library_management.exception.ErrorMessages;
 import io.github.SenaUstun_Dev.library_management.repository.AuthorRepository;
@@ -281,6 +286,33 @@ public class BookServiceImpl implements BookService {
         List<Book> booksByPublisher = bookRepository.findByPublishersContains(publisher);
 
         return booksByPublisher.stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<BookResponse> findLostBooks() {
+        List<Book> lostBooks = bookRepository.findByStatus(BookStatus.LOST);
+        return lostBooks.stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<BookResponse> findActiveBooks() {
+        List<Book> activeBooks = bookRepository.findByStatus(BookStatus.ACTIVE);
+        return activeBooks.stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<BookResponse> findBorrowedBooks() {
+        List<Book> borrowedBooks = bookRepository.findByStatus(BookStatus.BORROWED);
+        return borrowedBooks.stream()
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
     }

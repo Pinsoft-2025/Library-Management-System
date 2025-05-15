@@ -101,6 +101,42 @@ public class BookController {
         List<BookResponse> response = bookService.findBookByPublisher(publisherName);
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/admin/status/lost")
+    @Operation(summary = "Kayıp durumdaki kitapları listele", description = "Kayıp olarak işaretlenen kitapları listeler. Admin rolü gerektirir.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kitaplar başarıyla listelendi"),
+            @ApiResponse(responseCode = "403", description = "Erişim reddedildi (admin rolü gerekli)")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<BookResponse>> findLostBooks() {
+        List<BookResponse> response = bookService.findLostBooks();
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/admin/status/active")
+    @Operation(summary = "Aktif durumdaki kitapları listele", description = "Aktif durumdaki kitapları listeler. Admin rolü gerektirir.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kitaplar başarıyla listelendi"),
+            @ApiResponse(responseCode = "403", description = "Erişim reddedildi (admin rolü gerekli)")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<BookResponse>> findActiveBooks() {
+        List<BookResponse> response = bookService.findActiveBooks();
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/admin/status/borrowed")
+    @Operation(summary = "Ödünç alınmış durumdaki kitapları listele", description = "Ödünç alınmış durumdaki kitapları listeler. Admin rolü gerektirir.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kitaplar başarıyla listelendi"),
+            @ApiResponse(responseCode = "403", description = "Erişim reddedildi (admin rolü gerekli)")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<BookResponse>> findBorrowedBooks() {
+        List<BookResponse> response = bookService.findBorrowedBooks();
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/admin")
     @Operation(
